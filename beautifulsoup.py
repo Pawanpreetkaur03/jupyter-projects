@@ -1,16 +1,23 @@
+from selenium import webdriver
 from bs4 import BeautifulSoup
-import requests
+from Selenium.webdriver.chrome.service import Service
+from csv
 
-# fetching webpage content
-url = 'https://rdpolytech.blackboard.com/webapps/blackboard/execute/displayLearningUnit?course_id=_51595_1&content_id=_3590326_1#'
+#initialize the chrome web driver 
+driver = webdriver.chrome()
 
-response = requests.get(url)
-html_content = response.content
+page_url = 'https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810000401'
 
-#Parse the html content BeautifulSoup
-soup = BeautifulSoup(html_content, 'html.parser')
+#Fetching the web page 
 
-# Extract specific elements
-table = soup.find(id='simpleTable')
+#
 
-print(table)
+# Parse the HTML content
+soup = BeautifulSoup(page_source, 'html.parser')
+
+# Find the table element 
+table = soup.find(id= 'simpleTable')
+
+if table:
+    #Extact column headers
+ headers = [] 
