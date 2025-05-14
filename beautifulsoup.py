@@ -1,7 +1,7 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from Selenium.webdriver.chrome.service import Service
-from csv
+
 
 #initialize the chrome web driver 
 driver = webdriver.chrome()
