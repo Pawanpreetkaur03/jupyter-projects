@@ -1,23 +1,89 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from Selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service
+import csv
 
+driver = webdriver.Chrome()
 
-#initialize the chrome web driver 
-driver = webdriver.chrome()
-
+#specify the url
 page_url = 'https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810000401'
 
-#Fetching the web page 
+driver.get(page_url)
 
-#
+#Wait for the table to load
 
-# Parse the HTML content
+driver.implicitly_wait(10)
+
+
+#Get the page source after the JavaScript execution 
+page_source = driver.page_source
+
+#Parsing the HTML document 
 soup = BeautifulSoup(page_source, 'html.parser')
 
-# Find the table element 
-table = soup.find(id= 'simpleTable')
+#Find the table element 
+table = soup.find('table', class_='pub-table')
 
 if table:
-    #Extact column headers
- headers = [] 
+#Extract the column headers using list comprehension 
+    headers = [th.get_text().strip() for th in table.find_all('th')]
+    
+#Extract the row data
+    rows = []
+    for tr in table.find_all('tr'):
+       row = [td.get_text().strip() for td in tr.find_all('td')]
+       if row:
+           rows.append(row)
+
+    
+#print column headers
+    print("Column headers:")
+    print(headers)
+
+#print column headers
+    print("\nRow Data:")
+    for row in rows:
+        print(row)
+
+#new set of headers inside a tuple  
+    headers_tuple = (
+        'All-items',
+        'Food5',
+        'Shelter6',
+        'Household operations, furnishings and equipment',
+        'Clothing and footwear',
+        'Transportation',
+        'Gasoline',
+        'Health and personal care',
+        'Recreation, education and reading',
+        'Alcoholic beverages, tabacco products and recreational cannabis',
+        'All-items  excluding food and energy7', 'All-items excluding energy7',
+        'Energy7', 
+        'Goods8', 
+        'Services9'
+    )
+
+
+#write the data to CSV file 
+    with open ('table_data.csv', 'w', newline='')  as csvfile:
+      writer = csv.writer(csvfile)
+
+      #Insert the new column as the first column in each row
+      for i, row in enumerate(rows):
+        rows[i] = [headers_tuple[i]] + row
+
+#write headers
+      writer.writerow(headers[2:8])
+
+#write rows
+      writer.writerows(rows)
+   
+
+    print('Data has been successfully saved to table_data.csv!')
+
+else:
+
+    print('Table not found')
+
+#Close the WebDriver
+driver.quit()
